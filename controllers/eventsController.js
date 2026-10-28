@@ -1,67 +1,21 @@
-const express = require("express");
+const express = require('express');
 const events = express.Router({ mergeParams: true });
-const {
-  getAllEvents,
-  getEvent,
-  newEvent,
-  deleteEvent,
-  updateEvent,
-} = require("../queries/events");
+const { getAllEvents, getEvent, newEvent, deleteEvent, updateEvent } = require('../queries/events');
 
-// INDEX
-events.get("/", async (req, res) => {
-    const { user_Id } = req.params;
-
+function handler(operation, status = 200) {
+  return async (req, res) => {
     try {
-      const allEvents = await getAllEvents(user_Id);
-      res.json(allEvents);
-    } catch (err) {
-      res.json(err);
+      const result = await operation(req);
+      if (result === null) return res.status(404).json({ error: 'Event not found' });
+      return res.status(status).json(result);
+    } catch (error) {
+      return res.status(500).json({ error: 'Unable to process events' });
     }
-  });
-
-// SHOW
-events.get("/:eventid", async (req, res) => {
-  const { user_Id, eventid  } = req.params;
-  const event = await getEvent(user_Id, eventid);
-
-  if (event.id = eventid) {
-    res.json(event);
-  } else {
-    res.status(404).json({ error: `There is no eventID: ${eventid} within user_id: ${user_Id}` });
-  }
-});
-
-// Post
-events.post("/", async (req, res) => {
-  const { user_Id  } = req.params;
-  const event = await newEvent(user_Id, req.body);
-
-  res.status(200).json(event);
-});
-
-// UPDATE
-events.put("/:eventid", async (req, res) => {
-  const { user_Id, eventid } = req.params;
-  const updatedEvent = await updateEvent(user_Id, eventid, req.body);
-
-  if (updatedEvent.eventid = eventid) {
-    res.status(200).json(updatedEvent);
-  } else {
-    res.status(404).json("Event not found");
-  }
-});
-
-// DELETE
-events.delete("/:eventid", async (req, res) => {
-  const { user_Id, eventid } = req.params;
-  const deletedEvent = await deleteEvent(user_Id, eventid);
-
-  if (deletedEvent.id = eventid) {
-    res.status(200).json(deletedEvent);
-  } else {
-    res.status(404).json({ error: "Event not found" });
-  }
-});
-
+  };
+}
+events.get('/', handler(req => getAllEvents(req.params.user_Id)));
+events.get('/:eventid', handler(req => getEvent(req.params.user_Id, req.params.eventid)));
+events.post('/', handler(req => newEvent(req.params.user_Id, req.body), 201));
+events.put('/:eventid', handler(req => updateEvent(req.params.user_Id, req.params.eventid, req.body)));
+events.delete('/:eventid', handler(req => deleteEvent(req.params.user_Id, req.params.eventid)));
 module.exports = events;
