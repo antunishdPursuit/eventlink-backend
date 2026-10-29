@@ -8,6 +8,7 @@ const app = express();
 // MIDDLEWARE
 app.use(cors());
 app.use(express.json());
+app.use('/api', require('./controllers/discoveryController'));
 
 // ROUTES
 app.get("/", (req, res) => {
