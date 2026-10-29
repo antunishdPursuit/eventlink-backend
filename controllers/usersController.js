@@ -19,7 +19,7 @@ function requireOwner(req, res, next) {
 users.get("/", async (req, res) => {
   const allUsers = await getAllUsers();
 
-  if (allUsers[0]) {
+  if (Array.isArray(allUsers)) {
     res.status(200).json(allUsers);
   } else {
     res.status(500).json({ error: "Show All Users error" });
