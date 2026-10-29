@@ -1,6 +1,6 @@
 # EventLink backend
 
-The Express API provides profile and event data for the [EventLink frontend](https://github.com/antunishdPursuit/events_attending). It also requests event listings from Ticketmaster without sending the API key to the browser.
+The Express API provides profile and event data for the [EventLink frontend](https://github.com/antunishdPursuit/eventlink). It also requests event listings from Ticketmaster without sending the API key to the browser.
 
 ## Local setup
 
