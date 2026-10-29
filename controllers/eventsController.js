@@ -2,6 +2,13 @@ const express = require('express');
 const events = express.Router({ mergeParams: true });
 const { getAllEvents, getEvent, newEvent, deleteEvent, updateEvent } = require('../queries/events');
 
+events.use((req, res, next) => {
+  if (req.method === 'GET') return next();
+  if (!req.session.userId) return res.status(401).json({ error: 'Sign in first.' });
+  if (String(req.session.userId) !== req.params.user_Id) return res.status(403).json({ error: 'Not allowed.' });
+  next();
+});
+
 function handler(operation, status = 200) {
   return async (req, res) => {
     try {
