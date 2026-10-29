@@ -12,12 +12,7 @@ const getAllUsers = async () => {
 
 // Show one User by id
 const getUser = async (id) => {
-  try {
-    const oneUser = await db.one("SELECT * FROM users WHERE id=$1", id);
-    return oneUser;
-  } catch (error) {
-    return error;
-  }
+  return db.oneOrNone("SELECT * FROM users WHERE id=$1", id);
 };
 
 // CREATE one User

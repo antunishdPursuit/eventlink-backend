@@ -30,12 +30,15 @@ users.get("/", async (req, res) => {
 // SHOW
 users.get("/:id", async (req, res) => {
   const { id } = req.params;
-  const user = await getUser(id);
-
-  if (user) {
-    res.json(user);
-  } else {
-    res.status(404).json({ error: "Show one User failed" });
+  if (!/^[1-9]\d*$/.test(id) || Number(id) > 2147483647) {
+    return res.status(404).json({ error: 'Profile not found.' });
+  }
+  try {
+    const user = await getUser(id);
+    if (!user) return res.status(404).json({ error: 'Profile not found.' });
+    return res.json(user);
+  } catch (_) {
+    return res.status(500).json({ error: 'Unable to load profile.' });
   }
 });
 
